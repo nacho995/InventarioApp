@@ -232,4 +232,4 @@ This project demonstrates proficiency in:
 - Frontend Development with Blazor and component libraries
 - DevOps: User Secrets, Git workflow, deployment pipelines
 - Problem Solving: Real-time inventory management challenges
-🚀 Built with passion for clean code and user experience
+🚀 Built with passion for clean code and user experience# InventarioAppC-.NET
