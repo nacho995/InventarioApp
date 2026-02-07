@@ -4,6 +4,8 @@ using InventarioApp.Data;
 using MudBlazor.Services;
 using InventarioApp.Services;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<StockService>();
 
@@ -21,6 +23,11 @@ builder.Services.AddMudServices();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
