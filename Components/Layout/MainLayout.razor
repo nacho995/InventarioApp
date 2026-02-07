@@ -1,0 +1,46 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider Theme="_arcadeTheme" IsDarkMode="true" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<div class="arcade-container">
+    <div class="sidebar arcade-sidebar">
+        <NavMenu />
+    </div>
+    <main class="arcade-main">
+        <div class="arcade-header">
+            <MudText Typo="Typo.h5" Class="arcade-title">INVENTARIOAPP</MudText>
+            
+        </div>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+@code {
+    private MudTheme _arcadeTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#FFD700",
+            Secondary = "#FF00FF",
+            Tertiary = "#00FFFF",
+            Background = "#0a0a0a",
+            Surface = "#1a1a2e",
+            AppbarBackground = "#0a0a0a",
+            TextPrimary = "#FFD700",
+            TextSecondary = "#00FFFF"
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#FFD700",
+            Secondary = "#FF00FF", 
+            Tertiary = "#00FFFF",
+            Background = "#0a0a0a",
+            Surface = "#1a1a2e",
+            AppbarBackground = "#0a0a0a",
+            TextPrimary = "#FFD700",
+            TextSecondary = "#00FFFF"
+        }
+    };
+}

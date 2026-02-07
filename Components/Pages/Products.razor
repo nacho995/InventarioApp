@@ -1,0 +1,117 @@
+@page "/products"
+@rendermode InteractiveServer
+@using InventarioApp.Data
+@using InventarioApp.Models
+@using InventarioApp.Services
+@using ChangeLogModel = InventarioApp.Models.ChangeLog
+@inject ProductService ProductService
+@inject IDialogService DialogService
+
+<MudText Typo="Typo.h4">    
+    Productos
+</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenForm">
+    Agregar Producto
+</MudButton>
+<MudTextField ValueChanged="@( ( string s ) => OnSearchChanged(s))" Label="Buscar Producto"
+              Adornment="Adornment.Start"
+              AdornmentIcon="@Icons.Material.Filled.Search"
+              Immediate="true" />
+
+@if (ShowForm)
+{
+    <MudTextField @bind-Value="newProduct.Name" Label="Nombre" />
+    <MudNumericField @bind-Value="newProduct.Price" Label="Precio" />
+    <MudNumericField @bind-Value="newProduct.Stock" Label="Stock" />
+
+    <MudSelect @bind-Value="newProduct.CategoryId" Label="Categoría">
+        <MudSelectItem Value="0">Selecciona una categoría</MudSelectItem>
+        @foreach (var category in categories)
+        {
+            <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProduct">
+        Agregar Producto
+    </MudButton>
+    
+}
+
+
+@foreach (var product in products.Where(p => string.IsNullOrEmpty(searchText) || p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
+{
+    <MudCard Style="margin-bottom: 10px">
+        <MudCardContent>
+            <MudText>@product.Name</MudText>
+            <MudText>@product.Price</MudText>
+            <MudText>@product.Stock</MudText>
+            <MudText>@product.Category?.Name</MudText>
+        </MudCardContent>  
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => EditProduct(product)">
+                Editar
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="() => DeleteProduct(product)">
+                Eliminar
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+List<Product> products = new List<Product>();
+List<Category> categories = new List<Category>();
+
+protected override async Task OnInitializedAsync()
+{
+    products = await ProductService.GetProductsAsync();
+    categories = await ProductService.GetCategoriesAsync();
+}
+
+public void OpenForm()
+{
+    ShowForm = true;
+}
+bool ShowForm = false;
+Product newProduct = new Product();
+
+public async Task SaveProduct()
+{
+    string? result = await ProductService.CreateOrUpdateProductAsync(newProduct);
+    if (result != null)
+    {
+        await DialogService.ShowMessageBox("Error", result);
+        return;
+    }
+    products = await ProductService.GetProductsAsync();
+    ShowForm = false;
+    newProduct = new Product();
+}
+
+public async Task DeleteProduct(Product product)
+{
+    string? result = await ProductService.DeleteProduct(product.Id);
+    if (result != null)
+    {
+        await DialogService.ShowMessageBox("Error", result);
+        return;
+    }
+    products = await ProductService.GetProductsAsync();
+}
+
+public async Task EditProduct(Product product)
+{
+    newProduct = product;
+    await Task.CompletedTask;
+    ShowForm = true;
+}
+
+string searchText = "";
+
+private void OnSearchChanged(string value)
+{
+    searchText = value;
+    StateHasChanged();
+}
+
+}

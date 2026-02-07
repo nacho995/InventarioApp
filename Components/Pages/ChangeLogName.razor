@@ -1,0 +1,33 @@
+@page "/changelog"
+@rendermode InteractiveServer
+@using InventarioApp.Data
+@using ChangeLogModel = InventarioApp.Models.ChangeLog
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+<MudText Typo="Typo.h4">Historial de Cambios</MudText>
+<MudPaper Class="pa-4 mt-4" Elevation="2">
+    <MudTable Items="logs" T="ChangeLogModel" Dense="true" Hover="true">
+        <HeaderContent>
+            <MudTh>Fecha</MudTh>
+            <MudTh>Entidad</MudTh>
+            <MudTh>Acción</MudTh>
+            <MudTh>Detalles</MudTh>
+        </HeaderContent>
+        <RowTemplate Context="log">
+            <MudTd>@log.Date.ToString("dd/MM/yyyy HH:mm")</MudTd>
+            <MudTd>@log.Entity</MudTd>
+            <MudTd>@log.Action</MudTd>
+            <MudTd>@log.Details</MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
+@code {
+    List<ChangeLogModel> logs = new();
+    protected override async Task OnInitializedAsync()
+    {
+        logs = await Db.ChangeLogs
+            .OrderByDescending(l => l.Date)
+            .Take(50)
+            .ToListAsync();
+    }
+}

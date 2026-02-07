@@ -1,0 +1,94 @@
+@page "/stock"
+@using InventarioApp.Models
+@rendermode InteractiveServer
+@inject StockService StockService
+@using InventarioApp.Services
+
+
+
+<MudForm>
+    <MudSelect Label="Producto" T="Product" @bind-Value="selectedProduct">
+        @foreach (var product in products)
+        {
+            <MudSelectItem Value="@product">@product.Name</MudSelectItem>
+        }
+    </MudSelect>
+    <MudSelect @bind-Value="selectedTypes" Label="Tipo de movimiento">
+        <MudSelectItem Value="TipoMovimiento.IN">Entrada</MudSelectItem>
+        <MudSelectItem Value="TipoMovimiento.OUT">Salida</MudSelectItem>
+        <MudSelectItem Value="TipoMovimiento.ADJUST">Ajuste</MudSelectItem>
+    </MudSelect>
+    <MudNumericField @bind-Value="quantity" Label="Cantidad"></MudNumericField>
+    <MudTextField @bind-Value="notes" Label="Notas"></MudTextField>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveMovement">Guardar</MudButton>
+</MudForm>
+<MudPaper Class="pa-4 mt-4" Elevation="2">
+    <MudTable Items="stockMovements" Dense="true" Hover="true">
+        <HeaderContent>
+            <MudTh>Fecha</MudTh>
+            <MudTh>Producto</MudTh>
+            <MudTh>Tipo</MudTh>
+            <MudTh>Cantidad</MudTh>
+            <MudTh>Notas</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Date.ToString("dd/MM/yyyy HH:mm")</MudTd>
+            <MudTd>@context.Product?.Name</MudTd>
+            <MudTd>
+                <MudChip T="string" Color="@GetTypeColor(context.Type)" Size="Size.Small" >
+                    @GetTypeName(context.Type)
+                </MudChip>
+            </MudTd>
+            <MudTd>@context.Quantity</MudTd>
+            <MudTd>@context.Notes</MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
+
+@code {
+
+    List<Product> products = new();
+    List<StockMovement> stockMovements = new();
+    Product? selectedProduct;
+    TipoMovimiento selectedTypes;
+    int quantity;
+    string? notes;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        products = await StockService.GetProducts();
+        stockMovements = await StockService.GetStockMovements();
+    }
+
+    public async Task SaveMovement()
+    {
+        if (selectedProduct == null || quantity <= 0) return;
+        var error = await StockService.AddStockMovement(selectedProduct.Id, selectedTypes, quantity, notes);
+        if (error != null) return;
+        products = await StockService.GetProducts();
+        stockMovements = await StockService.GetStockMovements();
+        selectedProduct = null;
+        quantity = 0;
+        notes = null;
+    }
+    private Color GetTypeColor(TipoMovimiento type)
+    {
+        return type switch
+        {
+            TipoMovimiento.IN => Color.Success,
+            TipoMovimiento.OUT => Color.Error,
+            TipoMovimiento.ADJUST => Color.Warning,
+            _ => Color.Default
+        };
+    }
+    private string GetTypeName(TipoMovimiento type)
+    {
+        return type switch
+        {
+            TipoMovimiento.IN => "Entrada",
+            TipoMovimiento.OUT => "Salida",
+            TipoMovimiento.ADJUST => "Ajuste",
+            _ => "Desconocido"
+        };
+    }
+}

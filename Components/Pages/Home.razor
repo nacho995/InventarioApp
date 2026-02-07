@@ -1,0 +1,115 @@
+﻿@page "/"
+@using InventarioApp.Data
+@using InventarioApp.Models
+@inject ApplicationDbContext DbContext
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+<PageTitle>Dashboard</PageTitle>
+<MudText Typo="Typo.h4" Class="mb-4">Dashboard</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6">Productos</MudText>
+            <MudText Typo="Typo.h3">@totalProducts</MudText>
+        </MudPaper>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6">Categorías</MudText>
+            <MudText Typo="Typo.h3">@totalCategories</MudText>
+        </MudPaper>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6">Stock Total</MudText>
+            <MudText Typo="Typo.h3">@totalStock</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+<MudGrid Class="mt-4">
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6" Class="mb-4">Productos por Categoría</MudText>
+            @if (categoryLabels.Length > 0)
+            {
+                <MudChart ChartType="ChartType.Pie" 
+                          InputData="@categoryData" 
+                          InputLabels="@categoryLabels"
+                          Width="100%" 
+                          Height="300px" />
+            }
+            else
+            {
+                <MudText>No hay datos para mostrar</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+    
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudText Typo="Typo.h6" Class="mb-4">Stock por Producto</MudText>
+            @if (stockLabels.Length > 0)
+            {
+                <MudChart ChartType="ChartType.Bar" 
+                          ChartSeries="@stockSeries"
+                          XAxisLabels="@stockLabels"
+                          Width="100%" 
+                          Height="300px" />
+            }
+            else
+            {
+                <MudText>No hay datos para mostrar</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+@code {
+    int totalProducts;
+    int totalCategories;
+    int totalStock;
+    
+    // Datos para gráfico de pastel (productos por categoría)
+    double[] categoryData = Array.Empty<double>();
+    string[] categoryLabels = Array.Empty<string>();
+    
+    // Datos para gráfico de barras (stock por producto)
+    List<ChartSeries> stockSeries = new();
+    string[] stockLabels = Array.Empty<string>();
+    protected override async Task OnInitializedAsync()
+    {
+        totalProducts = await DbContext.Products.CountAsync();
+        totalCategories = await DbContext.Categories.CountAsync();
+        totalStock = await DbContext.Products.SumAsync(p => p.Stock);
+        
+        await LoadCategoryChart();
+        await LoadStockChart();
+    }
+    
+    private async Task LoadCategoryChart()
+    {
+        var data = await DbContext.Categories
+            .Include(c => c.Products)
+            .Select(c => new { Name = c.Name, Count = c.Products.Count })
+            .Where(c => c.Count > 0)
+            .ToListAsync();
+        
+        categoryLabels = data.Select(d => d.Name).ToArray();
+        categoryData = data.Select(d => (double)d.Count).ToArray();
+    }
+    
+    private async Task LoadStockChart()
+    {
+        var products = await DbContext.Products
+            .OrderByDescending(p => p.Stock)
+            .Take(10)
+            .ToListAsync();
+        
+        stockLabels = products.Select(p => p.Name).ToArray();
+        stockSeries = new List<ChartSeries>
+        {
+            new ChartSeries { Name = "Stock", Data = products.Select(p => (double)p.Stock).ToArray() }
+        };
+    }
+}

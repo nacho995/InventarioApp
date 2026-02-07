@@ -1,0 +1,316 @@
+/* ESTILO HACKER/TERMINAL */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap');
+html, body {
+    font-family: 'Fira Code', monospace !important;
+    background-color: #0d1117 !important;
+    color: #00FF00 !important;
+}
+/* Layout principal */
+.arcade-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #0d1117;
+}
+.arcade-sidebar {
+    width: 320px !important;
+    min-width: 320px !important;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    background: #010409;
+    border-right: 1px solid #00FF00;
+}
+.arcade-main {
+    flex: 1;
+    background-color: #0d1117;
+    display: flex;
+    flex-direction: column;
+}
+.arcade-main .content {
+    flex: 1;
+    background-color: #0d1117;
+    padding: 1rem;
+}
+/* Header estilo terminal */
+.arcade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #010409;
+    border-bottom: 1px solid #00FF00;
+    margin-bottom: 1rem;
+}
+.arcade-title {
+    color: #00FF00 !important;
+    font-size: 0.9rem !important;
+}
+.arcade-title::before {
+    content: "root@inventory:~$ ";
+    color: #00FF00;
+}
+.arcade-score {
+    color: #00FF00 !important;
+    font-size: 0.6rem !important;
+}
+.arcade-score::before {
+    content: "// ";
+    color: #666;
+}
+/* Nav header */
+.arcade-nav-header {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px dashed #00FF00;
+    margin-bottom: 1.5rem;
+}
+.arcade-logo {
+    font-size: 4rem !important;
+    color: #00FF00 !important;
+    text-shadow: 0 0 10px #00FF00;
+    display: block;
+}
+.arcade-logo::before {
+    content: "< ";
+}
+.arcade-logo::after {
+    content: " />";
+}
+.arcade-logo-sub {
+    font-size: 1.5rem !important;
+    color: #666 !important;
+    margin-top: 0.5rem;
+}
+.arcade-logo-sub::before {
+    content: "<< ";
+}
+.arcade-logo-sub::after {
+    content: " >>";
+}
+/* Links de navegación */
+.arcade-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.arcade-nav-link {
+    display: block;
+    padding: 0.8rem;
+    color: #00FF00 !important;
+    text-decoration: none;
+    font-size: 0.7rem;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+}
+.arcade-nav-link::before {
+    content: "$ ";
+    color: #666;
+}
+.arcade-nav-link:hover {
+    color: #FFFFFF !important;
+    border-left: 2px solid #00FF00;
+    background: rgba(0, 255, 0, 0.05);
+}
+.arcade-nav-link.active {
+    color: #FFFFFF !important;
+    border-left: 2px solid #00FF00;
+    background: rgba(0, 255, 0, 0.1);
+}
+/* Footer del nav */
+.arcade-nav-footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px dashed #00FF00;
+}
+.arcade-credits {
+    font-size: 0.5rem !important;
+    color: #666 !important;
+    margin-bottom: 0.5rem;
+}
+.arcade-blink {
+    font-size: 0.5rem !important;
+    color: #00FF00 !important;
+}
+.arcade-blink::after {
+    content: "_";
+    animation: cursor-blink 1s infinite;
+}
+@keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+/* Tarjetas estilo terminal */
+.mud-paper, .mud-card {
+    background: #010409 !important;
+    border: 1px solid #238636 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+/* Botones */
+.mud-button-filled {
+    background: #238636 !important;
+    border: 1px solid #238636 !important;
+    font-size: 0.9rem !important;
+    text-transform: none !important;
+    border-radius: 6px !important;
+}
+.mud-button-filled:hover {
+    background: #2ea043 !important;
+}
+.mud-button-filled .mud-button-label {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+.mud-button-text .mud-button-label {
+    color: #00FF00 !important;
+}
+/* Inputs estilo terminal */
+.mud-input {
+    font-family: 'Fira Code', monospace !important;
+}
+.mud-input-outlined .mud-input-outlined-border {
+    border-color: #30363d !important;
+    border-radius: 6px !important;
+}
+.mud-input-outlined:hover .mud-input-outlined-border {
+    border-color: #00FF00 !important;
+}
+.mud-input input {
+    color: #00FF00 !important;
+}
+.mud-input-label {
+    color: #666 !important;
+}
+/* Textos */
+.mud-typography {
+    font-family: 'Fira Code', monospace !important;
+}
+.mud-text, .mud-typography, p, span, label {
+    color: #c9d1d9 !important;
+}
+.mud-card-content .mud-typography {
+    color: #c9d1d9 !important;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #00FF00 !important;
+}
+/* Títulos con cursor */
+.mud-typography-h4 {
+    color: #00FF00 !important;
+    font-size: 1rem !important;
+}
+.mud-typography-h4::before {
+    content: "> ";
+    color: #666;
+}
+.mud-typography-h4::after {
+    content: "_";
+    animation: cursor-blink 1s infinite;
+}
+/* Select dropdown */
+.mud-select .mud-input-slot {
+    color: #00FF00 !important;
+}
+.mud-popover {
+    background: #010409 !important;
+    border: 1px solid #30363d !important;
+}
+.mud-list-item {
+    color: #c9d1d9 !important;
+}
+.mud-list-item:hover {
+    background: rgba(0, 255, 0, 0.1) !important;
+}
+/* Dialog */
+.mud-dialog {
+    background: #010409 !important;
+    border: 1px solid #30363d !important;
+}
+.mud-dialog-title {
+    color: #00FF00 !important;
+}
+/* Scrollbar estilo terminal */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #010409;
+}
+::-webkit-scrollbar-thumb {
+    background: #238636;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #2ea043;
+}
+/* Efecto de escaneo de líneas (opcional) */
+.arcade-main::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.1),
+            rgba(0, 0, 0, 0.1) 1px,
+            transparent 1px,
+            transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.3;
+}
+/* Validation */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #238636;
+}
+.invalid {
+    outline: 1px solid #f85149;
+}
+.validation-message {
+    color: #f85149;
+}
+/* Sobreescribir estilos de Blazor */
+.sidebar {
+    background: #010409 !important;
+}
+.top-row {
+    background: #010409 !important;
+    border-bottom: 1px solid #00FF00 !important;
+}
+.navbar-dark {
+    background: #010409 !important;
+}
+.navbar-brand {
+    color: #00FF00 !important;
+}
+.nav-item {
+    background: transparent !important;
+}
+.nav-link {
+    color: #00FF00 !important;
+}
+.nav-link:hover {
+    color: #FFFFFF !important;
+    background: rgba(0, 255, 0, 0.1) !important;
+}
+.page {
+    background: #0d1117 !important;
+}
+.main {
+    background: #0d1117 !important;
+}
+/* Forzar fondo oscuro en todo */
+*, *::before, *::after {
+    border-color: #30363d !important;
+}
+.bi {
+    color: #00FF00 !important;
+}
+.mud-chip-content {
+    color: #000000 !important;
+    font-weight: bold !important;
+}

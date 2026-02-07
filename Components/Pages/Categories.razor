@@ -1,0 +1,91 @@
+@page "/categories"
+@rendermode InteractiveServer
+@using InventarioApp.Data
+@using InventarioApp.Models
+@using InventarioApp.Services
+@using ChangeLogModel = InventarioApp.Models.ChangeLog
+@inject CategoriesService CategoriesService
+@inject IDialogService DialogService
+
+<MudText Typo="Typo.h4">    
+    Categorias
+</MudText>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenForm">
+    Agregar Categoria
+</MudButton>
+ @if (ShowForm)
+ {
+     <MudTextField @bind-Value="newCategorie.Name" Label="Nombre" />
+     <MudTextField @bind-Value="newCategorie.Description" Label="Descripcion" />
+     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveCategory">Guardar</MudButton>
+     
+ }
+
+@foreach (var category in categories)
+{
+    <MudPaper Elevation="3" Style="margin-bottom: 10px;">
+        <MudText Typo="Typo.h5">@category.Name</MudText>
+        <MudText>@category.Description</MudText>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>EditCategory(category)">Editar</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="()=>DeleteCategory(category)">Eliminar</MudButton>
+        </MudCardActions>
+    </MudPaper>
+}
+
+@code {
+
+    List<Category> categories = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoriesService.GetCategoriesAsync();
+    }
+    bool ShowForm = false;
+    
+    public void OpenForm()
+    {
+        ShowForm = true;
+    }
+
+    Category newCategorie = new Category();
+    
+    public async Task SaveCategory()
+    {
+        string? result = await CategoriesService.CreateOrUpdateCategoryAsync(newCategorie);
+        if(result != null)
+        {
+            await DialogService.ShowMessageBox("Error", result);
+            return;
+        }
+        categories = await CategoriesService.GetCategoriesAsync();
+        ShowForm = false;
+        newCategorie = new Category();
+    }
+
+    public void EditCategory(Category category)
+    {
+        ShowForm = true;
+        newCategorie = category;
+    }
+
+    public async Task DeleteCategory(Category category)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Eliminar Categoria",
+            $"Estas seguro de eliminar {category.Name}",
+            yesText: "Eliminar",
+            cancelText: "Cancelar");
+        if (confirm == true)
+        {   
+            string? result = await CategoriesService.DeleteCategory(category.Id);
+            if(result != null)
+            {
+                await DialogService.ShowMessageBox("Error", result);
+                return;
+            }
+            categories = await CategoriesService.GetCategoriesAsync();
+        }
+    }
+}
